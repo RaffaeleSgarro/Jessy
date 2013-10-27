@@ -20,3 +20,4 @@ To start the application from the command line, run the task jfxsa-run:
 
     $ ant jfxsa-run
     
+The launcher class is app.Launcher
