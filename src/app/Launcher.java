@@ -1,5 +1,6 @@
 package app;
 
+import java.util.Properties;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -10,11 +11,18 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
+import org.apache.derby.jdbc.ClientDataSource;
+import org.apache.derby.jdbc.EmbeddedDataSource;
 
 public class Launcher extends Application {
     
     @Override
     public void start(Stage primaryStage) {
+        
+        Properties props = new Properties();
+        props.put("database.name", "jessy");
+        props.put("database.user", "APP");
+        props.put("app.name", "Jessy");
         
         ToolBar toolbar = new ToolBar();
         StackPane main = new StackPane();
@@ -23,15 +31,19 @@ public class Launcher extends Application {
             toolbar, main
         ).build();
         
+        ClientDataSource ds = new ClientDataSource();
+        ds.setDatabaseName(props.getProperty("database.name"));
+        ds.setUser(props.getProperty("database.user"));
+        
         Button calendarBtn = new Button("Calendar");
         calendarBtn.setOnAction(new SetMainContent(main, new Calendar()));
         Button workersBtn = new Button("Workers");
-        workersBtn.setOnAction(new SetMainContent(main, new Workers()));
+        workersBtn.setOnAction(new SetMainContent(main, new Workers(ds)));
         
         toolbar.getItems().addAll(calendarBtn, workersBtn);
         
         Scene scene = new Scene(root, 800, 600);
-        primaryStage.setTitle("APP.NAME");
+        primaryStage.setTitle(props.getProperty("app.name"));
         primaryStage.setScene(scene);
         primaryStage.show();
     }
