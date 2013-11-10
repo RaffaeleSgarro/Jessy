@@ -1,6 +1,12 @@
 package app;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Properties;
+import java.util.PropertyResourceBundle;
+import java.util.ResourceBundle;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -12,17 +18,16 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
 import org.apache.derby.jdbc.ClientDataSource;
-import org.apache.derby.jdbc.EmbeddedDataSource;
 
 public class Launcher extends Application {
     
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException {
         
         Properties props = new Properties();
-        props.put("database.name", "jessy");
-        props.put("database.user", "APP");
-        props.put("app.name", "Jessy");
+        props.load(res("/conf/database.properties"));
+        
+        ResourceBundle bundle = new PropertyResourceBundle(res("/locale/default/strings.properties"));
         
         ToolBar toolbar = new ToolBar();
         StackPane main = new StackPane();
@@ -38,12 +43,12 @@ public class Launcher extends Application {
         Button calendarBtn = new Button("Calendar");
         calendarBtn.setOnAction(new SetMainContent(main, new Calendar()));
         Button workersBtn = new Button("Workers");
-        workersBtn.setOnAction(new SetMainContent(main, new Workers(ds)));
+        workersBtn.setOnAction(new SetMainContent(main, new Workers(bundle, ds)));
         
         toolbar.getItems().addAll(calendarBtn, workersBtn);
         
         Scene scene = new Scene(root, 800, 600);
-        primaryStage.setTitle(props.getProperty("app.name"));
+        primaryStage.setTitle(bundle.getString("app.name"));
         primaryStage.setScene(scene);
         primaryStage.show();
     }
@@ -74,6 +79,11 @@ public class Launcher extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+    }
+    
+    private Reader res(String name) throws IOException {
+        InputStream in = getClass().getResourceAsStream(name);
+        return new InputStreamReader(in, "UTF-8");
     }
     
 }
