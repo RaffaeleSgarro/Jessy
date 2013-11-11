@@ -1,5 +1,7 @@
 package beans;
 
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -7,6 +9,7 @@ public class Worker {
     
     private final StringProperty firstName = new SimpleStringProperty();
     private final StringProperty lastName = new SimpleStringProperty();
+    private final IntegerProperty id = new SimpleIntegerProperty();
     
     public void setFirstName(String val) {
         firstName.set(val);
@@ -30,6 +33,18 @@ public class Worker {
     
     public StringProperty lastNameProperty() {
         return lastName;
+    }
+    
+    public void setId(Integer val) {
+        id.setValue(val);
+    }
+    
+    public Integer getId() {
+        return id.getValue();
+    }
+    
+    public IntegerProperty integerProperty() {
+        return id;
     }
 
 }
