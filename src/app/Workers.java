@@ -39,13 +39,21 @@ public class Workers extends ControllerBase implements ViewFactory {
     
     @Override
     public Node build() {
+        VBox vbox = new VBox();
+        final TextField search = new TextField();
+        final Button showAllBtn = new Button("Show all");
+        final Button createWorkerBtn = new Button("New");
+        
         HBox hbox = new HBox();
+        vbox.getChildren().addAll(
+            HBoxBuilder.create().children(search, showAllBtn, createWorkerBtn).build()
+            , hbox
+        );
         
         final ObjectProperty<Worker> workerProperty = new SimpleObjectProperty();
         final TextField firstName = new TextField();
         final TextField lastName = new TextField();
         
-        final Button createWorkerBtn = new Button("New");        
         final Button saveWorkerBtn = new Button("Save");
         final Button resetWorkerBtn = new Button("Reset");
         final Button deleteWorkerBtn = new Button("Delete");
@@ -53,7 +61,7 @@ public class Workers extends ControllerBase implements ViewFactory {
         Node workerButtons = HBoxBuilder.create().children(saveWorkerBtn, resetWorkerBtn, deleteWorkerBtn).build();
         
         final ListView<Worker> listView = new ListView<>();
-        VBox workerForm = VBoxBuilder.create().children(createWorkerBtn, firstName, lastName, workerButtons).build();
+        VBox workerForm = VBoxBuilder.create().children(firstName, lastName, workerButtons).build();
         hbox.getChildren().addAll(listView, workerForm);
         
         listView.setItems(FXCollections.observableList(workerDao.findAll()));
@@ -140,7 +148,7 @@ public class Workers extends ControllerBase implements ViewFactory {
         
         listView.getSelectionModel().select(null);
         
-        return hbox;
+        return vbox;
     }
     
 }
