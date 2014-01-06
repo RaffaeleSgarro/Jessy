@@ -6,3 +6,4 @@ lib/
 libs/
 
 nbproject/private
+derby.log
