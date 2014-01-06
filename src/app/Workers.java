@@ -23,6 +23,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.util.Callback;
@@ -44,11 +45,18 @@ public class Workers extends ControllerBase implements ViewFactory {
         final Button showAllBtn = new Button("Show all");
         final Button createWorkerBtn = new Button("New");
         
-        HBox hbox = new HBox();
+        HBox mainContent = new HBox();
+        HBox searchBar = HBoxBuilder.create().children(search, showAllBtn, createWorkerBtn).build();
         vbox.getChildren().addAll(
-            HBoxBuilder.create().children(search, showAllBtn, createWorkerBtn).build()
-            , hbox
+            searchBar
+            , mainContent
         );
+        
+        VBox.setVgrow(mainContent, Priority.ALWAYS);
+        vbox.setSpacing(10);
+        mainContent.setSpacing(10);
+        searchBar.setSpacing(10);
+        HBox.setHgrow(search, Priority.ALWAYS);
         
         final ObjectProperty<Worker> workerProperty = new SimpleObjectProperty();
         final TextField firstName = new TextField();
@@ -62,7 +70,10 @@ public class Workers extends ControllerBase implements ViewFactory {
         
         final ListView<Worker> listView = new ListView<>();
         VBox workerForm = VBoxBuilder.create().children(firstName, lastName, workerButtons).build();
-        hbox.getChildren().addAll(listView, workerForm);
+        mainContent.getChildren().addAll(listView, workerForm);
+        HBox.setHgrow(listView, Priority.ALWAYS);
+        HBox.setHgrow(workerForm, Priority.ALWAYS);
+        
         
         listView.setItems(FXCollections.observableList(workerDao.findAll()));
         
