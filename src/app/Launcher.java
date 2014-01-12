@@ -1,5 +1,6 @@
 package app;
 
+import dao.WorkHourDao;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -40,8 +41,10 @@ public class Launcher extends Application {
         ds.setDatabaseName(props.getProperty("database.name"));
         ds.setUser(props.getProperty("database.user"));
         
+        WorkHourDao workHourDao = new WorkHourDao(ds);
+        
         Button calendarBtn = new Button("Calendar");
-        calendarBtn.setOnAction(new SetMainContent(main, new Calendar()));
+        calendarBtn.setOnAction(new SetMainContent(main, new Calendar(workHourDao)));
         Button workersBtn = new Button("Workers");
         workersBtn.setOnAction(new SetMainContent(main, new Workers(bundle, ds)));
         

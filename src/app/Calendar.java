@@ -1,6 +1,6 @@
 package app;
 
-import java.text.DateFormat;
+import dao.WorkHourDao;
 import java.util.Date;
 import java.util.Locale;
 import java.util.logging.Logger;
@@ -12,19 +12,31 @@ import javafx.scene.layout.HBoxBuilder;
 
 public class Calendar implements ViewFactory {
     
+    private final WorkHourDao workHourDao;
+    
+    
     private final Logger log = Logger.getLogger("calendar");
 
+    public Calendar(WorkHourDao workHourDao) {
+        this.workHourDao = workHourDao;
+    }
+    
     @Override
     public Node build() {
-        MonthDaysWidget calendarWidget = new MonthDaysWidget(new Date(), Locale.ITALIAN);
+        Date initialDay = new Date();
+        
+        MonthDaysWidget calendarWidget = new MonthDaysWidget(initialDay, Locale.ITALIAN);
+        final DayHours dayHours = new DayHours(workHourDao);
+        dayHours.setDay(initialDay);
+        
         HBox hbox = HBoxBuilder.create()
-                .children(calendarWidget.getWidget())
+                .children(calendarWidget.getWidget(), dayHours.getWidget())
                 .build();
+        
         calendarWidget.dateProperty().addListener(new ChangeListener<Date>() {
-
             @Override
             public void changed(ObservableValue<? extends Date> ov, Date oldVal, Date newVal) {
-                log.info(DateFormat.getDateInstance().format(newVal));
+                dayHours.setDay(newVal);
             }
         });
         
