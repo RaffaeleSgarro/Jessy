@@ -2,11 +2,13 @@ package app;
 
 import java.util.GregorianCalendar;
 import java.util.Locale;
-import javafx.scene.control.Cell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.GridPaneBuilder;
 
 import static java.util.Calendar.*;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
 
 /**
  * The grid has 7 columns (one for each week day) and 6 rows (because a month
@@ -28,10 +30,22 @@ public class MonthDaysWidget {
     public MonthDaysWidget(Locale locale) {
         this.locale = locale;
         grid = GridPaneBuilder.create().build();
-        String[] foo = {"sdf"};
+        Insets cellsMargin = new Insets(10, 10, 10, 10);
+        for (int row = 0; row < 6; row++) {
+            for (int column  = 0; column < 7; column++ ) {
+                DayCell cell = new DayCell();
+                grid.add(cell, column, row);
+                GridPane.setMargin(cell, cellsMargin);
+                days[cellIdx(row, column)] = cell;
+            }
+        }
     }
     
-    private static class DayCell extends Cell {
+    public Node getWidget() {
+        return grid;
+    }
+    
+    private static class DayCell extends Label {
     }
     
     /**
@@ -49,7 +63,28 @@ public class MonthDaysWidget {
         cal.set(DAY_OF_MONTH, 1);
         int dayOfWeek = cal.get(DAY_OF_WEEK);
         
-        int index = cell(dayOfWeek);
+        int indexOfFirstDayOfMonth = cell(dayOfWeek);
+        int maxDayOfMonth = cal.getMaximum(DAY_OF_MONTH);
+        int currentDay = 0;
+        
+        for (int row = 0; row < 6; row++) {
+            for (int column  = 0; column < 7; column++ ) {
+                DayCell cell = days[cellIdx(row, column)];
+                if (row == 0 && column < indexOfFirstDayOfMonth) {
+                    cell.setText("");
+                } else if (currentDay < maxDayOfMonth) {
+                    currentDay += 1;
+                    cell.setText(Integer.toString(currentDay));
+                } else {
+                    cell.setText("");
+                }
+            }
+        }
+        
+    }
+    
+    private int cellIdx(int row, int column) {
+        return row * 7 + column;
     }
     
     public int cell(int day) {
