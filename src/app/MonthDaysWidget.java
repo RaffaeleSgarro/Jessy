@@ -156,6 +156,7 @@ public class MonthDaysWidget {
         
         public void putInEnabledMode(int day) {
             mEnabled = true;
+            dayProperty.set(day);
             textProperty().set(Integer.toString(day));
         }
         
