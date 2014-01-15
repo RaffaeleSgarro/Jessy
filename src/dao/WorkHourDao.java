@@ -22,16 +22,19 @@ public class WorkHourDao {
         this.ds = ds;
     }
     
-    public List<WorkHour> findWorkedHours(Date day) {
+    public List<WorkHour> __findWorkedHours(Date day) {
         List<WorkHour> out = new ArrayList<>();
         return out;
     }
     
     // TODO
-    public List<WorkHour> __findWorkedHours(Date day) {
+    public List<WorkHour> findWorkedHours(Date day) {
         try {
             Connection conn = ds.getConnection();
-            PreparedStatement stmt = conn.prepareStatement("SELECT ");
+            PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT WORKER_ID, FIRST_NAME, LAST_NAME, DAY, HOURS"
+                            + " FROM WORKED_HOUR WH JOIN WORKER W ON WH.WORKER_ID = W.ID"
+                            + " WHERE DAY = ?");
             stmt.setDate(1, new java.sql.Date(day.getTime()));
             ResultSet result = stmt.executeQuery();
             
@@ -49,7 +52,7 @@ public class WorkHourDao {
                 hour.date = result.getDate("day");
                 hour.hours = result.getBigDecimal("hours");
             }
-            return null;
+            return out;
         } catch (SQLException e) {
             log.severe(e.getMessage());
             throw new RuntimeException(e);

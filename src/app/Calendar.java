@@ -2,6 +2,7 @@ package app;
 
 import dao.WorkHourDao;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
@@ -23,7 +24,7 @@ public class Calendar implements ViewFactory {
     
     @Override
     public Node build() {
-        Date initialDay = new Date();
+        Date initialDay = new GregorianCalendar(2013, 10, 9).getTime();
         
         MonthDaysWidget calendarWidget = new MonthDaysWidget(initialDay, Locale.ITALIAN);
         final DayHours dayHours = new DayHours(workHourDao);
