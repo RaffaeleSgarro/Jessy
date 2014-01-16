@@ -2,10 +2,11 @@ package app;
 
 import beans.WorkHour;
 import dao.WorkHourDao;
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import javafx.beans.binding.Bindings;
+import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -20,13 +21,13 @@ import javafx.util.Callback;
 
 public class DayHours {
     
+    private static final Logger log = Logger.getLogger("day_hours");
+    
     private final ListView<WorkHour> list = new ListView<>();
     
     private final Button saveBtn = new Button("Salva");
     private final Button cancelBtn = new Button("Annulla");
     private final WorkHourDao workHourDao;
-    
-    private final Map<String, WorkHour> hoursData = new HashMap<>();
     
     private Date day;
     
@@ -39,7 +40,7 @@ public class DayHours {
         saveBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                
+                DayHours.this.workHourDao.storeDay(list.getItems(), day);
             }
         });
         
@@ -86,12 +87,22 @@ public class DayHours {
     
     private static class WorkHourCell extends ListCell<WorkHour> {
         @Override
-        public void updateItem(WorkHour item, boolean empty) {
+        public void updateItem(final WorkHour item, boolean empty) {
             if (empty) {
                 setGraphic(new Label());
             } else {
                 Label worker = new Label(item.worker.getLastName() + " " + item.worker.getFirstName());
                 TextField hours = new TextField(item.hours.toString());
+                hours.textProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {
+                        try {
+                            item.hours = new BigDecimal(newVal);
+                        } catch (NumberFormatException e) {
+                            log.warning(e.getMessage());
+                        }
+                    }
+                });
                 hours.setPrefWidth(25);
                 setGraphic(HBoxBuilder.create().children(worker, hours).build());
             }
