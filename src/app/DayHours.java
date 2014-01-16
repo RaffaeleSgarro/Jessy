@@ -92,7 +92,7 @@ public class DayHours {
                 setGraphic(new Label());
             } else {
                 Label worker = new Label(item.worker.getLastName() + " " + item.worker.getFirstName());
-                TextField hours = new TextField(item.hours.toString());
+                TextField hours = new TextField(item.hours != null ? item.hours.toString() : "");
                 hours.textProperty().addListener(new ChangeListener<String>() {
                     @Override
                     public void changed(ObservableValue<? extends String> ov, String oldVal, String newVal) {

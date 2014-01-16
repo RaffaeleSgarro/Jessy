@@ -33,9 +33,11 @@ public class WorkHourDao {
             List<WorkHour> out;
             try (Connection conn = ds.getConnection()) {
                 PreparedStatement stmt = conn.prepareStatement(
-                        "SELECT WORKER_ID, FIRST_NAME, LAST_NAME, DAY, HOURS"
-                                + " FROM WORKED_HOUR WH JOIN WORKER W ON WH.WORKER_ID = W.ID"
-                                + " WHERE DAY = ?");
+                        "SELECT W.ID, W.FIRST_NAME, W.LAST_NAME, WH.DAY, WH.HOURS"
+                                + " FROM WORKER W LEFT OUTER JOIN ("
+                                + " SELECT * FROM WORKED_HOUR WHERE DAY = ?"
+                                + " ) AS WH"
+                                + " ON W.ID = WH.WORKER_ID");
                 stmt.setDate(1, new java.sql.Date(day.getTime()));
                 ResultSet result = stmt.executeQuery();
                 out = new ArrayList<>();
@@ -45,7 +47,7 @@ public class WorkHourDao {
                     out.add(hour);
                     hour.worker = worker;
                     
-                    worker.setId(result.getInt("worker_id"));
+                    worker.setId(result.getInt("id"));
                     worker.setFirstName(result.getString("first_name"));
                     worker.setLastName(result.getString("last_name"));
                     
@@ -65,8 +67,9 @@ public class WorkHourDao {
         try {
             // TODO should begin a transaction
             conn = ds.getConnection();
+            java.sql.Date timestamp = new java.sql.Date(day.getTime());
             PreparedStatement stmt = conn.prepareStatement("DELETE FROM WORKED_HOUR WHERE DAY = ?");
-            stmt.setDate(1, new java.sql.Date(day.getTime()));
+            stmt.setDate(1, timestamp);
             stmt.execute();
            
             stmt = conn.prepareStatement("INSERT INTO WORKED_HOUR (WORKER_ID, DAY, HOURS) VALUES (?, ?, ?)");
@@ -74,7 +77,7 @@ public class WorkHourDao {
                 
                 //stmt.addBatch();
                 stmt.setInt(1, hour.worker.getId());
-                stmt.setDate(2, new java.sql.Date(hour.date.getTime()));
+                stmt.setDate(2, timestamp);
                 stmt.setBigDecimal(3, hour.hours);
                 stmt.addBatch();
             }     
