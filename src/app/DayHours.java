@@ -88,6 +88,7 @@ public class DayHours {
     private static class WorkHourCell extends ListCell<WorkHour> {
         @Override
         public void updateItem(final WorkHour item, boolean empty) {
+            super.updateItem(item, empty);
             if (empty) {
                 setGraphic(new Label());
             } else {
