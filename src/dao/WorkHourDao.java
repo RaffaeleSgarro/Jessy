@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
@@ -95,6 +96,29 @@ public class WorkHourDao {
                     //
                 }
             }   
+        }
+    }
+    
+    public List<WorkHour> findUnpaid(int workerId) {
+        try (Connection conn = ds.getConnection()) {
+            List<WorkHour> out = new ArrayList<>();
+            PreparedStatement stmt = conn.prepareStatement("SELECT * FROM WORKED_HOUR"
+                    + " WHERE WORKER_ID = ?"
+                    + " AND PAYMENT_ID IS NULL"
+                    + " AND HOURS > 0"
+                    + " ORDER BY DAY ASC");
+            stmt.setInt(1, workerId);
+            ResultSet res = stmt.executeQuery();
+            while (res.next()) {
+                WorkHour wh = new WorkHour();
+                out.add(wh);
+                wh.date = res.getDate("day");
+                wh.hours = res.getBigDecimal("hours");
+            }
+            return out;
+        } catch (SQLException e) {
+            log.severe(e.getMessage());
+            return Collections.emptyList();
         }
     }
 

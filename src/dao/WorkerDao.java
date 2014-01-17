@@ -30,6 +30,7 @@ public class WorkerDao {
             while ( res.next() ) {
                 Worker w = new Worker();
                 result.add(w);
+                w.setId(res.getInt("ID"));
                 w.setFirstName(res.getString("first_name"));
                 w.setLastName(res.getString("last_name"));
             }

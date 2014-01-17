@@ -1,13 +1,13 @@
 package app;
 
 import beans.Worker;
+import dao.PaymentDao;
+import dao.WorkHourDao;
 import dao.WorkerDao;
 import java.util.Random;
 import java.util.ResourceBundle;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -32,9 +32,13 @@ import javax.sql.DataSource;
 public class Workers extends ControllerBase implements ViewFactory {
 
     private final WorkerDao workerDao;
+    private final WorkHourDao workHourDao;
+    private final PaymentDao paymentDao;
     
     public Workers(ResourceBundle res, DataSource ds) {
         super(res);
+        paymentDao = new PaymentDao(ds);
+        workHourDao = new WorkHourDao(ds);
         workerDao = new WorkerDao(ds);
     }
     
@@ -44,6 +48,7 @@ public class Workers extends ControllerBase implements ViewFactory {
         final TextField search = new TextField();
         final Button showAllBtn = new Button("Show all");
         final Button createWorkerBtn = new Button("New");
+        final PaymentHistory paymentHistory = new PaymentHistory(paymentDao, workHourDao);
         
         HBox mainContent = new HBox();
         HBox searchBar = HBoxBuilder.create().children(search, showAllBtn, createWorkerBtn).build();
@@ -69,7 +74,7 @@ public class Workers extends ControllerBase implements ViewFactory {
         Node workerButtons = HBoxBuilder.create().children(saveWorkerBtn, resetWorkerBtn, deleteWorkerBtn).build();
         
         final ListView<Worker> listView = new ListView<>();
-        VBox workerForm = VBoxBuilder.create().children(firstName, lastName, workerButtons).build();
+        VBox workerForm = VBoxBuilder.create().children(firstName, lastName, workerButtons, paymentHistory.getWidget()).build();
         mainContent.getChildren().addAll(listView, workerForm);
         HBox.setHgrow(listView, Priority.ALWAYS);
         HBox.setHgrow(workerForm, Priority.ALWAYS);
@@ -107,6 +112,7 @@ public class Workers extends ControllerBase implements ViewFactory {
                     saveWorkerBtn.setDisable(false);
                     deleteWorkerBtn.setDisable(false);
                     resetWorkerBtn.setDisable(false);
+                    paymentHistory.showPaymentHistory(newVal.getId());
                 } else {
                     firstName.textProperty().set("");
                     lastName.textProperty().set("");
@@ -115,6 +121,7 @@ public class Workers extends ControllerBase implements ViewFactory {
                     saveWorkerBtn.setDisable(true);
                     deleteWorkerBtn.setDisable(true);
                     resetWorkerBtn.setDisable(true);
+                    paymentHistory.showEmptyBox();
                 }
             }
         });
