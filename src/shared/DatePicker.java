@@ -21,6 +21,7 @@ public class DatePicker extends MenuButton {
             @Override
             public void changed(ObservableValue<? extends Date> ov, Date t, Date t1) {
                 setText(t1.toString());
+                hide();
             }
         });
         calWrapper.getStyleClass().add("date-picker");

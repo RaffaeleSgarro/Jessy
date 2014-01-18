@@ -72,9 +72,9 @@ public class MonthDaysWidget {
                 grid.add(cell, column, row);
                 GridPane.setMargin(cell, cellsMargin);
                 days[cellIdx(row, column)] = cell;
-                cell.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                cell.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
-                    public void handle(MouseEvent t) {
+                    public void handle(ActionEvent t) {
                         if (cell.isInEnabledMode()) {
                             GregorianCalendar cal = new GregorianCalendar(MonthDaysWidget.this.locale);
                             cal.set(YEAR, getYear());
@@ -141,7 +141,7 @@ public class MonthDaysWidget {
         return root;
     }
     
-    private static class DayCell extends Label {
+    private static class DayCell extends Button {
         
         private final IntegerProperty dayProperty = new SimpleIntegerProperty(0);
         private boolean mEnabled;
