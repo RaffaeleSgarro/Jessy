@@ -51,6 +51,7 @@ public class Launcher extends Application {
         toolbar.getItems().addAll(calendarBtn, workersBtn);
         
         Scene scene = new Scene(root, 800, 600);
+        scene.getStylesheets().add("style/style.css");
         primaryStage.setTitle(bundle.getString("app.name"));
         primaryStage.setScene(scene);
         primaryStage.show();

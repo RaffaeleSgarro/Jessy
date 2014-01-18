@@ -5,13 +5,8 @@ import java.util.Date;
 import java.util.Locale;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.Button;
 import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
-import javafx.stage.Popup;
-import javafx.stage.Window;
 
 public class DatePicker extends MenuButton {
     
@@ -28,6 +23,7 @@ public class DatePicker extends MenuButton {
                 setText(t1.toString());
             }
         });
+        calWrapper.getStyleClass().add("date-picker");
         calWrapper.setGraphic(cal.getWidget());
         getItems().setAll(calWrapper);
     }
