@@ -48,7 +48,7 @@ public class Workers extends ControllerBase implements ViewFactory {
         final TextField search = new TextField();
         final Button showAllBtn = new Button("Show all");
         final Button createWorkerBtn = new Button("New");
-        final PaymentHistory paymentHistory = new PaymentHistory(paymentDao, workHourDao);
+        final Payments paymentHistory = new Payments(paymentDao, workHourDao);
         
         HBox mainContent = new HBox();
         HBox searchBar = HBoxBuilder.create().children(search, showAllBtn, createWorkerBtn).build();
@@ -112,7 +112,7 @@ public class Workers extends ControllerBase implements ViewFactory {
                     saveWorkerBtn.setDisable(false);
                     deleteWorkerBtn.setDisable(false);
                     resetWorkerBtn.setDisable(false);
-                    paymentHistory.showPaymentHistory(newVal.getId());
+                    paymentHistory.showNewPaymentForm(newVal.getId());
                 } else {
                     firstName.textProperty().set("");
                     lastName.textProperty().set("");

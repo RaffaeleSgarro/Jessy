@@ -13,7 +13,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import shared.DatePicker;
 
-public class PaymentHistory {
+public class Payments {
     
     private final VBox root = new VBox();
     private final Button newPaymentBtn = new Button("Registra pagamento");
@@ -23,18 +23,19 @@ public class PaymentHistory {
     
     private int workerId;
     
-    public PaymentHistory(PaymentDao dao, WorkHourDao workHourDao) {
+    public Payments(PaymentDao dao, WorkHourDao workHourDao) {
         this.paymentDao = dao;
         this.workHourDao = workHourDao;
         newPaymentBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent t) {
-                showNewPaymentForm();
+                showNewPaymentForm(workerId);
             }
         });
     }
     
-    public void showNewPaymentForm() {
+    public void showNewPaymentForm(int workerId) {
+        this.workerId = workerId;
         SelectHours selectHours = new SelectHours();
         root.getChildren().setAll(new DatePicker(), new TextField("totale"), new Label("Dettaglio ore"), selectHours.getWidget());
         selectHours.setHours(workHourDao.findUnpaid(workerId));
