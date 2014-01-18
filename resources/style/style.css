@@ -1,6 +1,5 @@
 .menu-item.date-picker:hover:focused {
     -fx-background-color: transparent;
-    /*-fx-text-fill: green;*/
 }
 
 .menu-item.date-picker:hover .label {
