@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import shared.DatePicker;
 
 public class PaymentHistory {
     
@@ -35,7 +36,7 @@ public class PaymentHistory {
     
     public void showNewPaymentForm() {
         SelectHours selectHours = new SelectHours();
-        root.getChildren().setAll(new Label("Data"), new TextField("totale"), new Label("Dettaglio ore"), selectHours.getWidget());
+        root.getChildren().setAll(new DatePicker(), new TextField("totale"), new Label("Dettaglio ore"), selectHours.getWidget());
         selectHours.setHours(workHourDao.findUnpaid(workerId));
     }
     
