@@ -5,7 +5,10 @@ import beans.WorkHour;
 import dao.PaymentDao;
 import dao.WorkHourDao;
 import java.math.BigDecimal;
-import javafx.collections.ListChangeListener;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.SetChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -29,8 +32,10 @@ public class Payments {
     // payment subform
     private final TextField amount = new TextField();
     private final TextField hourlyRate = new TextField();
-    private final Label selectedTotalHours = new Label();
+    private final Label totalHoursLbl = new Label();
     private final Button computeAmountBtn = new Button("Calcola");
+    
+    private ObjectProperty<BigDecimal> totalHoursCount = new SimpleObjectProperty<>();
     
     // select hours
     private final SelectHours selectHours = new SelectHours();
@@ -53,12 +58,22 @@ public class Payments {
             public void onChanged(SetChangeListener.Change<? extends WorkHour> change) {
                 BigDecimal total = BigDecimal.ZERO;
                 for (WorkHour wh : change.getSet()) {
-                    if (wh.hours != null)
+                    if (wh.hours != null) {
                         total = total.add(wh.hours);
+                    }
                 }
-                selectedTotalHours.setText(String.format("Totale selezionato %.1f ore", total));
+                totalHoursCount.set(total);
             }
         });
+       
+       totalHoursCount.addListener(new ChangeListener<BigDecimal>(){
+            @Override
+            public void changed(ObservableValue<? extends BigDecimal> ov, BigDecimal t, BigDecimal t1) {
+                totalHoursLbl.setText(String.format("Totale: %.1f ore", t1));
+            }
+        });
+       
+       totalHoursCount.setValue(BigDecimal.ZERO);
     }
     
     public void showNewPaymentForm(int workerId) {
@@ -68,9 +83,10 @@ public class Payments {
                           new Label("Data pagamento")
                           , new DatePicker()).build()
                 , HBoxBuilder.create().children(
-                        new Label("Totale")
+                        new Label("Importo")
                         , amount
-                        , selectedTotalHours
+                        , totalHoursLbl
+                        , new Label("€/ora:")
                         , hourlyRate
                         , computeAmountBtn).build()
                 , new Label("Dettaglio ore")
