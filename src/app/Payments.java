@@ -5,6 +5,11 @@ import beans.WorkHour;
 import dao.PaymentDao;
 import dao.WorkHourDao;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.util.Locale;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -30,12 +35,13 @@ public class Payments {
     private final WorkHourDao workHourDao;
     
     // payment subform
-    private final TextField amount = new TextField();
+    private final Label amount = new Label();
     private final TextField hourlyRate = new TextField();
     private final Label totalHoursLbl = new Label();
     private final Button computeAmountBtn = new Button("Calcola");
     
-    private ObjectProperty<BigDecimal> totalHoursCount = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> amountProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<BigDecimal> totalHoursCount = new SimpleObjectProperty<>();
     
     // select hours
     private final SelectHours selectHours = new SelectHours();
@@ -70,6 +76,28 @@ public class Payments {
             @Override
             public void changed(ObservableValue<? extends BigDecimal> ov, BigDecimal t, BigDecimal t1) {
                 totalHoursLbl.setText(String.format("Totale: %.1f ore", t1));
+            }
+        });
+       
+       computeAmountBtn.setOnAction(new EventHandler<ActionEvent>(){
+            @Override
+            public void handle(ActionEvent t) {
+                try { 
+                    DecimalFormat fmt = new DecimalFormat();
+                    fmt.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.ITALIAN));
+                    fmt.setParseBigDecimal(true);
+                    BigDecimal hr = (BigDecimal) fmt.parse(hourlyRate.getText());
+                    amountProperty.set(hr.multiply(totalHoursCount.get()));
+                } catch (ParseException e) {
+                    // TODO report parsing error to UI?
+                }
+            }
+        });
+       
+       amountProperty.addListener(new ChangeListener<BigDecimal>() {
+            @Override
+            public void changed(ObservableValue<? extends BigDecimal> ov, BigDecimal t, BigDecimal t1) {
+                amount.setText(NumberFormat.getInstance(Locale.ITALIAN).format(t1));
             }
         });
        
