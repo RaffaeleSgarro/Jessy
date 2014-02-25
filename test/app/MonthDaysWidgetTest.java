@@ -16,14 +16,14 @@ public class MonthDaysWidgetTest {
     @Test
     public void testGetCellIndex() {
         MonthDaysWidget target = new MonthDaysWidget(new Date(), Locale.ITALIAN);
-        assertEquals(target.cell(SUNDAY), 6);
-        assertEquals(target.cell(MONDAY), 0);
-        assertEquals(target.cell(WEDNESDAY), 2);
+        assertEquals(target.column(SUNDAY), 6);
+        assertEquals(target.column(MONDAY), 0);
+        assertEquals(target.column(WEDNESDAY), 2);
         
         target = new MonthDaysWidget(new Date(), Locale.US);
-        assertEquals(target.cell(SUNDAY), 0);
-        assertEquals(target.cell(MONDAY), 1);
-        assertEquals(target.cell(SATURDAY), 6);
+        assertEquals(target.column(SUNDAY), 0);
+        assertEquals(target.column(MONDAY), 1);
+        assertEquals(target.column(SATURDAY), 6);
     }
     
 }

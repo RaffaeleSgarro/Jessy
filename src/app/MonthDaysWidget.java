@@ -22,7 +22,6 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
@@ -71,7 +70,7 @@ public class MonthDaysWidget {
                 final DayCell cell = new DayCell();
                 grid.add(cell, column, row);
                 GridPane.setMargin(cell, cellsMargin);
-                days[cellIdx(row, column)] = cell;
+                days[idx(row, column)] = cell;
                 cell.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent t) {
@@ -174,13 +173,13 @@ public class MonthDaysWidget {
         cal.set(DAY_OF_MONTH, 1);
         int dayOfWeek = cal.get(DAY_OF_WEEK);
         
-        int indexOfFirstDayOfMonth = cell(dayOfWeek);
+        int indexOfFirstDayOfMonth = column(dayOfWeek);
         int maxDayOfMonth = cal.getActualMaximum(DAY_OF_MONTH);
         int currentDay = 0;
         
         for (int row = 0; row < 6; row++) {
             for (int column  = 0; column < 7; column++ ) {
-                DayCell cell = days[cellIdx(row, column)];
+                DayCell cell = days[idx(row, column)];
                 if (row == 0 && column < indexOfFirstDayOfMonth) {
                     cell.putInDisabledMode();
                 } else if (currentDay < maxDayOfMonth) {
@@ -194,11 +193,23 @@ public class MonthDaysWidget {
         
     }
     
-    private int cellIdx(int row, int column) {
+    /**
+     * 
+     * @param row index, ranges [0 - 5]
+     * @param column index ranges [0, 6]
+     * @return the index of the cell in the 1-dimensional array of cells held
+     *     by the widget
+     */
+    private int idx(int row, int column) {
         return row * 7 + column;
     }
     
-    public int cell(int day) {
+    /**
+     * 
+     * @param day the day of the week, as seen in Calendar. 1-based, SUNDAY is 1
+     * @return the column index (0-based) in the grid according to the Locale
+     */
+    public int column(int day) {
         GregorianCalendar cal = new GregorianCalendar(locale);
         int translated = day - cal.getFirstDayOfWeek();
         return translated < 0 ? translated + 7 : translated;
