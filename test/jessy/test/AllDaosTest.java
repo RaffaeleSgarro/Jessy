@@ -1,9 +1,8 @@
-package jessy.dao;
+package jessy.test;
 
 import java.util.Date;
 import jessy.attendance.AttendanceSheet;
 import jessy.attendance.AttendanceSheetDao;
-import jessy.test.TestBase;
 import jessy.workers.WorkersDao;
 import org.testng.annotations.Test;
 
