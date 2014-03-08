@@ -28,7 +28,7 @@ public class WorkersDao extends DaoBase {
     
     public int create(String first, String last) throws SQLException {
         String sql = "insert into worker (first_name, last_name) values (?, ?)";
-        return insert(sql, Integer.class, first, last);
+        return insertAutoId(sql, Integer.class, first, last);
     }
 
 }
