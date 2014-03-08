@@ -18,7 +18,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 import javafx.stage.Stage;
-import org.apache.derby.jdbc.ClientDataSource;
+import javax.sql.DataSource;
 
 public class Launcher extends Application {
     
@@ -37,9 +37,11 @@ public class Launcher extends Application {
             toolbar, main
         ).build();
         
-        ClientDataSource ds = new ClientDataSource();
+        DataSource ds = null;
+        /*
         ds.setDatabaseName(props.getProperty("database.name"));
         ds.setUser(props.getProperty("database.user"));
+        */
         
         WorkHourDao workHourDao = new WorkHourDao(ds);
         

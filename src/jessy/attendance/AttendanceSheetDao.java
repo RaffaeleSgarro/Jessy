@@ -1,5 +1,6 @@
 package jessy.attendance;
 
+import javax.inject.Inject;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -14,7 +15,8 @@ import jessy.utils.IOUtils;
 public class AttendanceSheetDao extends DaoBase {
     
     private final AttendanceSheetJsonHelper jsonHelper = new AttendanceSheetJsonHelper();
-
+    
+    @Inject
     public AttendanceSheetDao(DataSource ds) {
         super(ds);
     }

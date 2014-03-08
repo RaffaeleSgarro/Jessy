@@ -1,4 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?><!-- You may freely edit this file. See commented blocks below for --><!-- some examples of how to customize the build. --><!-- (If you delete it and reopen the project it will be recreated.) --><!-- By default, only the Clean and Build commands use this build script. --><project name="Jessy" default="default" basedir="." xmlns:fx="javafx:com.sun.javafx.tools.ant">
+<?xml version="1.0" encoding="UTF-8"?><!-- You may freely edit this file. See commented blocks below for --><!-- some examples of how to customize the build. --><!-- (If you delete it and reopen the project it will be recreated.) --><!-- By default, only the Clean and Build commands use this build script. -->
+<project name="Jessy" default="default" basedir="."
+    xmlns:fx="javafx:com.sun.javafx.tools.ant"
+    xmlns:flyway="antlib:com.googlecode.flyway.ant">
     <description>Builds, tests, and runs the project Jessy.</description>
     <import file="nbproject/build-impl.xml"/>
     <!--
@@ -50,4 +53,22 @@
     nbproject/build-impl.xml and nbproject/jfx-impl.xml.
 
     -->
+    <target name="migrate-db">
+        <taskdef uri="antlib:com.googlecode.flyway.ant"
+                 resource="com/googlecode/flyway/ant/antlib.xml">
+            <classpath>
+                <pathelement location="libs/flyway-core-2.3.jar"/>
+                <pathelement location="libs/flyway-ant-2.3.jar"/>
+            </classpath>
+        </taskdef>
+
+        <path id="flyway.classpath">
+            <fileset dir="./libs" includes="derby.jar"/>
+        </path>
+        
+        <property name="flyway.url" value="jdbc:derby:db/jessydata-test;create=true" />
+        <property name="flyway.locations" value="filesystem:./resources/migrations"/>
+
+        <flyway:migrate />
+    </target>
 </project>

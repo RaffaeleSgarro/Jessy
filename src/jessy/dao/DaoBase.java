@@ -31,8 +31,7 @@ public class DaoBase {
             PreparedStatement stmt = conn.prepareStatement(sql);
             bind(stmt, args);
             ResultSet result = stmt.executeQuery();
-            result.next();
-            return mapper.map(result);
+            return result.next() ? mapper.map(result) : null;
         } catch (SQLException e) {
             throw e;
         }

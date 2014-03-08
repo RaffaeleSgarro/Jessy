@@ -2,6 +2,7 @@ tmp/
 dist/
 build/
 bin/
+db/
 
 nbproject/private
 derby.log

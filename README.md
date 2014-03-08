@@ -15,23 +15,17 @@ Requirements
 Develop
 =======
 
-The JDBC URL/driver are temporarily hardcoded, while the database name is in
-resources/conf/database.properties. The application assumes there's a Derby
-network server listening on localhost:1537. To develop, start the Derby server,
-then prepare the database (note flyway is configured in its flyway/conf):
-
-    $ flyway\flyway.cmd migrate
-
 To start the application in Netbeans, right click on the project and then "run".
 To start the application from the command line, run the task jfxsa-run:
 
     $ ant jfxsa-run
     
-The launcher class is app.Launcher
+The launcher class is app.Launcher (currently doesn't work)
 
 Tips
 ====
 
-To clean the database you can use
+The following Ant tasks are used to manage the test database (db/jessydb-test
 
-    flyway clean
+    $ ant migrate-db
+    $ ant clean-db

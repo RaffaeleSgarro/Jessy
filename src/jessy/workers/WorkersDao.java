@@ -3,11 +3,13 @@ package jessy.workers;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import javax.inject.Inject;
 import javax.sql.DataSource;
 import jessy.dao.DaoBase;
 
 public class WorkersDao extends DaoBase {
     
+    @Inject
     public WorkersDao(DataSource ds) {
         super(ds);
     }
