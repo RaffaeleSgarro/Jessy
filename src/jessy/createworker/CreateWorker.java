@@ -7,6 +7,7 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -32,7 +33,7 @@ public class CreateWorker extends VBox {
     public CreateWorker(WorkersDao dao, ResourceBundle bundle) {
         this.dao = dao;
         
-        createBtn = new Button(bundle.getString("Create"));
+        createBtn = new Button(bundle.getString("create"));
         getChildren().setAll(firstName, lastName, createBtn);
        
         createBtn.setOnAction(new EventHandler<ActionEvent>() {
@@ -42,8 +43,14 @@ public class CreateWorker extends VBox {
             }
         });
         
-        firstName.setPromptText(bundle.getString("First name"));
-        lastName.setPromptText(bundle.getString("Last name"));
+        firstName.setPromptText(bundle.getString("first_name"));
+        lastName.setPromptText(bundle.getString("last_name"));
+        
+        firstName.setMaxWidth(Double.MAX_VALUE);
+        lastName.setMaxWidth(Double.MAX_VALUE);
+        createBtn.setMaxWidth(Double.MAX_VALUE);
+        
+        setSpacing(10);
     }
     
     public void onCreateBtnClicked(ActionEvent event) {

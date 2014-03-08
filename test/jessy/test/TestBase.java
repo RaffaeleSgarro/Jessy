@@ -4,9 +4,7 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.googlecode.flyway.core.Flyway;
 import javax.sql.DataSource;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.AfterSuite;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.BeforeSuite;
 
 public class TestBase {
@@ -15,10 +13,10 @@ public class TestBase {
     private final Injector injector;
     
     public TestBase() {
-        TestModule guiTestModule = new TestModule();
-        guiTestModule.appBundle = "/locale/default/strings.properties";
-        guiTestModule.testDb = "db/jessydata-test";
-        injector = Guice.createInjector(guiTestModule);
+        TestModule testModule = new TestModule();
+        testModule.appBundle = "/locale/default/strings.properties";
+        testModule.testDb = "db/jessydata-test";
+        injector = Guice.createInjector(testModule);
     }
     
     @BeforeSuite
