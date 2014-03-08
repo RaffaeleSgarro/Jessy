@@ -37,7 +37,7 @@ public class DaoBase {
         }
     }
     
-    public <DST> List<? super DST> fetch(String sql, Mapper<DST> mapper, Object... args) throws SQLException {       
+    public <DST> List<DST> fetch(String sql, Mapper<DST> mapper, Object... args) throws SQLException {       
         try (Connection conn = ds.getConnection()) {
             PreparedStatement stmt = conn.prepareStatement(sql);
             bind(stmt, args);

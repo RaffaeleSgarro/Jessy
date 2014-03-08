@@ -53,22 +53,27 @@
     nbproject/build-impl.xml and nbproject/jfx-impl.xml.
 
     -->
-    <target name="migrate-db">
-        <taskdef uri="antlib:com.googlecode.flyway.ant"
+    <!-- Flyway section starts here-->
+    <taskdef uri="antlib:com.googlecode.flyway.ant"
                  resource="com/googlecode/flyway/ant/antlib.xml">
             <classpath>
                 <pathelement location="libs/flyway-core-2.3.jar"/>
                 <pathelement location="libs/flyway-ant-2.3.jar"/>
             </classpath>
-        </taskdef>
-
-        <path id="flyway.classpath">
-            <fileset dir="./libs" includes="derby.jar"/>
-        </path>
-        
-        <property name="flyway.url" value="jdbc:derby:db/jessydata-test;create=true" />
-        <property name="flyway.locations" value="filesystem:./resources/migrations"/>
-
+    </taskdef>
+    
+    <path id="flyway.classpath">
+        <fileset dir="./libs" includes="derby.jar"/>
+    </path>
+    <property name="flyway.url" value="jdbc:derby:db/jessydata-test;create=true" />
+    <property name="flyway.locations" value="filesystem:./resources/migrations"/>
+    
+    <target name="migrate-db">
         <flyway:migrate />
     </target>
+    
+    <target name="clean-db">
+        <flyway:clean />
+    </target>
+    <!-- Flyway section ends here-->
 </project>
