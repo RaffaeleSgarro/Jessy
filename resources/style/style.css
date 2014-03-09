@@ -1,7 +1,16 @@
-.menu-item.date-picker:hover:focused {
+.menu-item.date-picker:hover:selected
+  , .menu-item.date-picker:focused:selected
+  , .menu-item.date-picker:hover
+  , .menu-item.date-picker:focused
+  , menu-item.date-picker:selected {
     -fx-background-color: transparent;
+    -fx-background: transparent;
 }
 
-.menu-item.date-picker:hover .label {
+.menu-item.date-picker:hover:selected .label
+  , .menu-item.date-picker:focused:selected .label
+  , .menu-item.date-picker:hover .label
+  , .menu-item.date-picker:focused .label
+  , menu-item.date-picker:selected .label {
     -fx-text-fill: black;
 }

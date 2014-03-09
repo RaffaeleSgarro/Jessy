@@ -1,4 +1,4 @@
-package app;
+package jessy.controls;
 
 import java.text.DateFormat;
 import java.text.DateFormatSymbols;
@@ -17,12 +17,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.HBoxBuilder;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.VBoxBuilder;
 
@@ -32,7 +33,7 @@ import javafx.scene.layout.VBoxBuilder;
  * 
  * Top left is (0, 0)
  * 
- * @author admin
+ * @author raffaele
  */
 public class MonthDaysWidget {
     
@@ -63,13 +64,11 @@ public class MonthDaysWidget {
         yearProperty.set(cal.get(YEAR));
         
         GridPane grid = GridPaneBuilder.create().build();
-        Insets cellsMargin = new Insets(10, 10, 10, 10);
         
         for (int row = 0; row < 6; row++) {
             for (int column  = 0; column < 7; column++ ) {
                 final DayCell cell = new DayCell();
                 grid.add(cell, column, row);
-                GridPane.setMargin(cell, cellsMargin);
                 days[idx(row, column)] = cell;
                 cell.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
@@ -86,12 +85,17 @@ public class MonthDaysWidget {
             }
         }
         
+        HBox header = HBoxBuilder.create().children(monthDisplay, prevYearBtn, yearDisplay, nextYearBtn).build();
+        header.setMaxWidth(Double.MAX_VALUE);
+        monthDisplay.setMaxWidth(Double.MAX_VALUE);
+        header.setSpacing(10);
+        HBox.setHgrow(monthDisplay, Priority.ALWAYS);
+        
         root = VBoxBuilder.create()
-                .children(displayDay, monthDisplay
-                        , HBoxBuilder.create().children(
-                                prevYearBtn, yearDisplay, nextYearBtn).build()
-                        , grid)
+                .children(header, grid)
                 .build();
+        
+        root.setSpacing(10);
         
         String[] monthsLabels = new DateFormatSymbols(locale).getMonths();
         for (int i = 0; i < 12; i++) {            
@@ -144,6 +148,11 @@ public class MonthDaysWidget {
         
         private final IntegerProperty dayProperty = new SimpleIntegerProperty(0);
         private boolean mEnabled;
+        
+        public DayCell() {
+            setPrefWidth(48);
+            setPrefHeight(32);
+        }
         
         public IntegerProperty dayProperty() {
             return dayProperty;
