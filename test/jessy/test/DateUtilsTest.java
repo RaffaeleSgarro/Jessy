@@ -4,6 +4,8 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
@@ -26,5 +28,21 @@ public class DateUtilsTest {
     private Date d(String str) throws ParseException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         return df.parse(str);
+    }
+    
+    @Test
+    public void testFindAbbrevWeekDaysNames_italianLocale() {
+        List<String> ita = findAbbrevWeekDaysNames(Locale.ITALIAN);
+        assertEquals(ita.size(), 7);
+        assertEquals(ita.get(0).toLowerCase(), "lun");
+        assertEquals(ita.get(6).toLowerCase(), "dom");
+    }
+    
+    @Test
+    public void testFindAbbrevWeekDaysNames_usLocale() {
+        List<String> eng = findAbbrevWeekDaysNames(Locale.US);
+        assertEquals(eng.size(), 7);
+        assertEquals(eng.get(0).toLowerCase(), "sun");
+        assertEquals(eng.get(6).toLowerCase(), "sat");
     }
 }

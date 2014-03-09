@@ -56,7 +56,7 @@ public class MonthDaysGrid {
         // Draw the grid headers
         List<String> shortWeekDays = DateUtils.findAbbrevWeekDaysNames(locale);
         for (int col = 0; col < 7; col++) {
-            grid.add(new Label(shortWeekDays.get(col + 1)), col, 0);
+            grid.add(new Label(shortWeekDays.get(col)), col, 0);
         }
         
         // Build the cells, register and show

@@ -2,7 +2,6 @@ package jessy.utils;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -45,7 +44,12 @@ public class DateUtils {
     }
     
     public static List<String> findAbbrevWeekDaysNames(Locale locale) {
-        return asList(DateFormatSymbols.getInstance(locale).getShortWeekdays());
+        List<String> out = new ArrayList<>();
+        out.addAll(asList(DateFormatSymbols.getInstance(locale).getShortWeekdays()));
+        int firstDayOfWeek = GregorianCalendar.getInstance(locale).getFirstDayOfWeek();
+        for (int i = 0; i < Calendar.SUNDAY; i++) out.remove(0);
+        for (int i = 1; i < firstDayOfWeek; i++) out.add(out.remove(0));
+        return out;
     }
     
 }
