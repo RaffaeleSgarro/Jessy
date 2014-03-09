@@ -1,7 +1,9 @@
 package jessy.test;
 
+import java.util.Date;
 import javafx.application.Application;
 import javafx.scene.Parent;
+import jessy.attendance.AttendanceSheetController;
 import jessy.createworker.CreateWorker;
 import jessy.workers.SearchWorker;
 import org.testng.annotations.Test;
@@ -19,6 +21,14 @@ public class InteractiveTest extends TestBase {
         fillDatabaseWithTestData();
         SearchWorker target = inject(SearchWorker.class);
         target.showAll();
+        putOnStage(target, 600, 600);
+    }
+    
+    @Test
+    public void testAttendancheSheet() throws Exception {
+        fillDatabaseWithTestData();
+        AttendanceSheetController target = inject(AttendanceSheetController.class);
+        target.load(new Date());
         putOnStage(target, 600, 600);
     }
     

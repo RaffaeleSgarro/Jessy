@@ -1,10 +1,9 @@
 package jessy.attendance;
 
-import java.math.BigDecimal;
+import java.util.Date;
 
 public class AttendanceSheet {
-    public String workerIds[] = {};
-    public String workerDescriptions[] = {};
+    public Date date;
     public String[] headers = {};
-    public BigDecimal[][] rows  = {};
+    public AttendanceSheetRow[] rows = {};
 }
