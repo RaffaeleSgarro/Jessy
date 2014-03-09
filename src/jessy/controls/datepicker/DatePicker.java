@@ -1,4 +1,4 @@
-package jessy.controls;
+package jessy.controls.datepicker;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,17 +13,16 @@ import javafx.scene.control.MenuItem;
 
 public class DatePicker extends MenuButton {
     
-    private final MonthDaysWidget cal;
+    private final MonthDaysGrid cal;
     private final MenuItem calWrapper = new MenuItem();
     private final ObjectProperty<DateFormat> dateFormat = new SimpleObjectProperty<DateFormat>(new SimpleDateFormat("dd/MM/yyyy"));
     
     public DatePicker() {
-        Date date = new Date();
+        Date today = new Date();
         
-        cal = new MonthDaysWidget(date, Locale.getDefault());
-        setText(date.toString());
+        cal = new MonthDaysGrid(Locale.getDefault(), today);
         
-        cal.dateProperty().addListener(new ChangeListener<Date>() {
+        cal.selectedDateProperty().addListener(new ChangeListener<Date>() {
             @Override
             public void changed(ObservableValue<? extends Date> observable, Date old, Date val) {
                 setText(dateFormat.get().format(val));
@@ -37,7 +36,7 @@ public class DatePicker extends MenuButton {
     }
     
     public ObjectProperty<Date> dateProperty() {
-        return cal.dateProperty();
+        return cal.selectedDateProperty();
     }
 
 }

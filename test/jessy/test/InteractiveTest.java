@@ -10,7 +10,7 @@ import jessy.attendance.SheetSidebar;
 import jessy.createworker.CreateWorker;
 import jessy.workers.SearchWorker;
 import org.testng.annotations.Test;
-import jessy.controls.DatePicker;
+import jessy.controls.datepicker.DatePicker;
 
 public class InteractiveTest extends TestBase {
     

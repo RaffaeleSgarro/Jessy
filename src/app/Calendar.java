@@ -1,6 +1,6 @@
 package app;
 
-import jessy.controls.MonthDaysWidget;
+import jessy.controls.datepicker.MonthDaysGrid;
 import dao.WorkHourDao;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -27,7 +27,7 @@ public class Calendar implements ViewFactory {
     public Node build() {
         Date initialDay = new GregorianCalendar(2013, 10, 9).getTime();
         
-        MonthDaysWidget calendarWidget = new MonthDaysWidget(initialDay, Locale.ITALIAN);
+        MonthDaysGrid calendarWidget = new MonthDaysGrid(Locale.ITALIAN, initialDay);
         final DayHours dayHours = new DayHours(workHourDao);
         dayHours.setDay(initialDay);
         
@@ -35,7 +35,7 @@ public class Calendar implements ViewFactory {
                 .children(calendarWidget.getWidget(), dayHours.getWidget())
                 .build();
         
-        calendarWidget.dateProperty().addListener(new ChangeListener<Date>() {
+        calendarWidget.selectedDateProperty().addListener(new ChangeListener<Date>() {
             @Override
             public void changed(ObservableValue<? extends Date> ov, Date oldVal, Date newVal) {
                 dayHours.setDay(newVal);

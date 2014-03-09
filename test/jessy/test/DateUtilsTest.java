@@ -7,7 +7,7 @@ import java.util.Date;
 import org.testng.annotations.Test;
 
 import static org.testng.Assert.*;
-import static jessy.payrolls.DateUtils.*;
+import static jessy.utils.DateUtils.*;
 
 public class DateUtilsTest {
     

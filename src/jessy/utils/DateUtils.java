@@ -1,10 +1,15 @@
-package jessy.payrolls;
+package jessy.utils;
 
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Locale;
+
+import static java.util.Arrays.asList;
 
 public class DateUtils {
     
@@ -33,6 +38,14 @@ public class DateUtils {
         }
         
         return out;
+    }
+    
+    public static List<String> findLongMonthsNames(Locale locale) {
+        return asList(DateFormatSymbols.getInstance(locale).getMonths());
+    }
+    
+    public static List<String> findAbbrevWeekDaysNames(Locale locale) {
+        return asList(DateFormatSymbols.getInstance(locale).getShortWeekdays());
     }
     
 }

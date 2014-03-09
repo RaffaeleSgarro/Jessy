@@ -24,7 +24,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.VBox;
-import jessy.controls.DatePicker;
+import jessy.controls.datepicker.DatePicker;
 
 public class Payments {
     
