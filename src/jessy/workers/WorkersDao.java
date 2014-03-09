@@ -21,9 +21,14 @@ public class WorkersDao extends DaoBase {
         return fetch(sql, workerMapperImpl);
     }
     
-    public int create(String first, String last) throws SQLException {
+    public Worker create(String first, String last) throws SQLException {
         String sql = "insert into worker (first_name, last_name) values (?, ?)";
-        return insertAutoId(sql, Integer.class, first, last);
+        int id = insertAutoId(sql, Integer.class, first, last);
+        Worker worker = new Worker();
+        worker.id = Integer.toString(id);
+        worker.firstName = first;
+        worker.lastName = last;
+        return worker;
     }
 
     public List<Worker> findByName(String input) throws SQLException {

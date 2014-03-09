@@ -54,9 +54,10 @@ public class CreateWorker extends VBox {
     
     public void onCreateBtnClicked(ActionEvent event) {
         try {
-            dao.create(firstName.getText(), lastName.getText());
+            Worker worker = dao.create(firstName.getText(), lastName.getText());
             firstName.clear();
             lastName.clear();
+            for (Listener<Worker> l : createListeners) l.onEvent(worker);
         } catch (SQLException e) {
             log.error("Could not create worker", e);
             throw new RuntimeException(e);
