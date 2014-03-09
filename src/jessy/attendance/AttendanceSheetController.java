@@ -5,7 +5,9 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -96,24 +98,38 @@ public class AttendanceSheetController extends VBox {
     
     private void onReload() {
         try {
-            load(sheet.date);
+            loadDate(sheet.date);
         } catch (SQLException e) {
             log.error("Can't reload attendance sheet", e);
             throw new RuntimeException(e);
         }
     }
 
-    public void load(Date date) throws SQLException {
+    public void loadDate(Date date) throws SQLException {
         sheet = sheetDao.find(date);
         
         if (sheet == null) {
-            // TODO maybe introduce active workers instead of findAll()?
-            sheet = prepareSheet(date, workersDao.findAll(), getColumnsForNewSheet());
-        } else {
-            // TODO add any current worker not in the list?
+            sheet = prepareNewSheet(date, workersDao.findAll(), getColumnsForNewSheet());
         }
         
         setUpTable();
+    }
+    
+    public void addRowForWorker(String id, String description) {
+        AttendanceSheetRow row = new AttendanceSheetRow();
+        row.workerId = id;
+        row.workerDescription = description;
+        row.values = new BigDecimal[sheet.headers.length];
+        
+        if (lookupRowIdx(row) < 0) {
+            AttendanceSheetRow[] rows = new AttendanceSheetRow[sheet.rows.length + 1];
+            rows[0] = row;
+            System.arraycopy(sheet.rows, 0, rows, 1, sheet.rows.length);
+            sheet.rows = rows;
+            setUpTable();
+        } else {
+            log.warn("Row already exists!");
+        }
     }
     
     private List<String> getColumnsForNewSheet() {
@@ -121,7 +137,7 @@ public class AttendanceSheetController extends VBox {
         return Arrays.asList("Magazzino", "Campagna");
     }
     
-    private AttendanceSheet prepareSheet(Date date, List<Worker> workers, List<String> columns) {
+    private AttendanceSheet prepareNewSheet(Date date, List<Worker> workers, List<String> columns) {
         AttendanceSheet newSheet = new AttendanceSheet();
         newSheet.date = date;
         newSheet.headers = columns.toArray(new String[columns.size()]);
@@ -203,21 +219,12 @@ public class AttendanceSheetController extends VBox {
     
     private int lookupRowIdx(AttendanceSheetRow targetRow) {
         for (int i = 0; i < sheet.rows.length; i++) {
-            if (sheet.rows[i] == targetRow) return i;
+            if (sheet.rows[i].workerId.equals(targetRow.workerId)) return i;
         }
-        throw new IllegalArgumentException("Row not found " + targetRow.workerId + ", " + targetRow.workerDescription);
+        return -1;
     }
     
     private String bigDecimalToString(BigDecimal number) {
         return number != null ? number.toString() : "";
-    }
-    
-    private BigDecimal stringToBigDecimal(String str) {
-        try {
-            return new BigDecimal(str);
-        } catch (Exception e) {
-            // TODO how to warn the user?
-            return null;
-        }
     }
 }

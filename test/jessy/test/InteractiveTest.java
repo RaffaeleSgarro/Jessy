@@ -28,7 +28,8 @@ public class InteractiveTest extends TestBase {
     public void testAttendancheSheet() throws Exception {
         fillDatabaseWithTestData();
         AttendanceSheetController target = inject(AttendanceSheetController.class);
-        target.load(new Date());
+        target.loadDate(new Date());
+        target.addRowForWorker("foo", "Jingle Bells");
         putOnStage(target, 600, 600);
     }
     
