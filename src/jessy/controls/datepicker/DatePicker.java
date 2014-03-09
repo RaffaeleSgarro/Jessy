@@ -18,9 +18,13 @@ public class DatePicker extends MenuButton {
     private final ObjectProperty<DateFormat> dateFormat = new SimpleObjectProperty<DateFormat>(new SimpleDateFormat("dd/MM/yyyy"));
     
     public DatePicker() {
+        this(Locale.getDefault());
+    }
+    
+    public DatePicker(Locale locale) {
         Date today = new Date();
         
-        cal = new MonthDaysGrid(Locale.getDefault(), today);
+        cal = new MonthDaysGrid(locale, today);
         
         cal.selectedDateProperty().addListener(new ChangeListener<Date>() {
             @Override
