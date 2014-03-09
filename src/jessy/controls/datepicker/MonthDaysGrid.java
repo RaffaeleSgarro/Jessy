@@ -35,6 +35,13 @@ public class MonthDaysGrid {
     // 2000, 2013, ...
     private final IntegerProperty viewedYearProperty = new SimpleIntegerProperty();
     
+    /**
+     * This flag is set because when selected date changes, the viewed month and
+     * the viewed year must be updated, but this is an internal update and should
+     * not fire repainting
+     */
+    private boolean ignoreChangeEvent = false;
+    
     private final Locale locale;
     private final Header header;
     private final VBox root = new VBox();
@@ -84,19 +91,25 @@ public class MonthDaysGrid {
             cal.setTime(val);
             int month = cal.get(MONTH);
             int year = cal.get(YEAR);
+            
+            ignoreChangeEvent = true;
             header.select(month, year);
+            ignoreChangeEvent = false;
+            
             refreshCellsLabels(year, month + 1);
         }
     };
     
     private final ChangeListener<Number> onViewedYearChanged = new ChangeListener<Number>() {
        @Override public void changed(ObservableValue<? extends Number> observable, Number old, Number val) {
+           if (ignoreChangeEvent) return;
            refreshCellsLabels(val.intValue(), viewedMonthProperty.get());
        }
     };
     
     private final ChangeListener<Number> onViewedMonthChanged = new ChangeListener<Number>() {
        @Override public void changed(ObservableValue<? extends Number> observable, Number old, Number val) {
+           if (ignoreChangeEvent) return;
            refreshCellsLabels(viewedYearProperty.get(), val.intValue());
        }
     };
