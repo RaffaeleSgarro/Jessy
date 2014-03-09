@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -16,20 +18,16 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 import javax.inject.Inject;
 import jessy.workers.Worker;
 import jessy.workers.WorkersDao;
@@ -41,6 +39,7 @@ public class AttendanceSheetController extends VBox {
     private static final Logger log = LoggerFactory.getLogger(AttendanceSheetController.class);
     
     private AttendanceSheet sheet;
+    private StringProperty[][] cells;
     
     private final ResourceBundle bundle;
     private final AttendanceSheetDao sheetDao;
@@ -106,10 +105,14 @@ public class AttendanceSheetController extends VBox {
 
     public void load(Date date) throws SQLException {
         sheet = sheetDao.find(date);
+        
         if (sheet == null) {
             // TODO maybe introduce active workers?
             sheet = prepareSheet(date, workersDao.findAll(), getColumnsForNewSheet());
+        } else {
+            // TODO add ant current worker not in the list?
         }
+        
         setUpTable();
     }
     
@@ -142,6 +145,14 @@ public class AttendanceSheetController extends VBox {
         ObservableList<TableColumn<AttendanceSheetRow, ?>> columns = table.getColumns();
         columns.add(name);
         
+        cells = new StringProperty[sheet.rows.length][sheet.headers.length];
+        for (int row = 0; row < sheet.rows.length; row++) {
+            for (int col = 0; col < sheet.headers.length; col++) {
+                BigDecimal val = sheet.rows[row].values[col];
+                cells[row][col] = new SimpleStringProperty(bigDecimalToString(val));
+            }
+        }
+        
         for (int i = 0; i < sheet.headers.length; i++) {
             columns.add(makeValueColumn(sheet.headers[i], i));
         }
@@ -149,64 +160,33 @@ public class AttendanceSheetController extends VBox {
         table.itemsProperty().set(FXCollections.observableArrayList(sheet.rows));
     }
     
-    private TableColumn<AttendanceSheetRow, BigDecimal> makeValueColumn(String header, int colIdxInSheet) {
-        TableColumn<AttendanceSheetRow, BigDecimal> column = new TableColumn<>(header);
+    private TableColumn<AttendanceSheetRow, String> makeValueColumn(String header, int colIdxInSheet) {
+        TableColumn<AttendanceSheetRow, String> column = new TableColumn<>(header);
         column.setPrefWidth(100);
         column.setEditable(true);
         column.setCellValueFactory(new SheetCellValueFactory(colIdxInSheet));
-        // column.setCellFactory(new SheetCellFactory(colIdxInSheet));
-        column.setCellFactory(TextFieldTableCell.<AttendanceSheetRow, BigDecimal>forTableColumn(bigDecimalStringConverter));
+        column.setCellFactory(TextFieldTableCell.<AttendanceSheetRow>forTableColumn());
         column.setOnEditCommit(onCellEditCommitted);
         return column;
     }
     
-    private static class SheetCellFactory implements Callback<TableColumn<AttendanceSheetRow, BigDecimal>, TableCell<AttendanceSheetRow, BigDecimal>> {
-        
-        private final int idx;
-        
-        public SheetCellFactory(int idx) {
-            this.idx = idx;
-        }
-        
-        @Override
-        public TableCell<AttendanceSheetRow, BigDecimal> call(TableColumn<AttendanceSheetRow, BigDecimal> p) {
-            return new SheetCell(idx);
-        }
-    }
-    
-    private static class SheetCell extends TableCell<AttendanceSheetRow, BigDecimal> {
-        
-        private final int idx;
-        private final TextField textField = new TextField();
-        
-        public SheetCell(int idx) {
-            this.idx = idx;
-            setGraphic(textField);
-        }
-        
-        @Override
-        public void updateItem(BigDecimal val, boolean empty) {
-            super.updateItem(val, empty);
-            if (empty) {
-                setGraphic(null);
-            } else {
-                setGraphic(textField);
-                textField.setText(bigDecimalStringConverter.toString(val));
-            }
-        }
-    }
-    
-    private final EventHandler<CellEditEvent<AttendanceSheetRow, BigDecimal>> onCellEditCommitted = new EventHandler<CellEditEvent<AttendanceSheetRow, BigDecimal>>() {
+    private final EventHandler<CellEditEvent<AttendanceSheetRow, String>> onCellEditCommitted = new EventHandler<CellEditEvent<AttendanceSheetRow, String>>() {
 
         @Override
-        public void handle(CellEditEvent<AttendanceSheetRow, BigDecimal> evt) {
-            int row = evt.getTablePosition().getRow();
+        public void handle(CellEditEvent<AttendanceSheetRow, String> evt) {
             int col = evt.getTablePosition().getColumn() - 1;
-            sheet.rows[row].values[col] = evt.getNewValue();
+            int row = evt.getTablePosition().getRow();
+            
+            try {
+                BigDecimal val = new BigDecimal(evt.getNewValue());
+                sheet.rows[row].values[col] = val;
+            } catch (Exception e) {
+                cells[row][col].setValue("#ERROR!");
+            }
         }
     };
     
-    private static class SheetCellValueFactory implements Callback<CellDataFeatures<AttendanceSheetRow, BigDecimal>, ObservableValue<BigDecimal>> {
+    private class SheetCellValueFactory implements Callback<CellDataFeatures<AttendanceSheetRow, String>, ObservableValue<String>> {
         
         private final int colIdxInSheet;
         
@@ -215,28 +195,28 @@ public class AttendanceSheetController extends VBox {
         }
 
         @Override
-        public ObservableValue<BigDecimal> call(CellDataFeatures<AttendanceSheetRow, BigDecimal> cdf) {
-            BigDecimal startValue = cdf.getValue().values[colIdxInSheet];
-            ObjectProperty<BigDecimal> val = new SimpleObjectProperty<>(startValue);
-            return val;
+        public ObservableValue<String> call(CellDataFeatures<AttendanceSheetRow, String> cdf) {
+            return cells[lookupRowIdx(cdf.getValue())][colIdxInSheet];
         }
     }
     
-    private static final StringConverter<BigDecimal> bigDecimalStringConverter = new StringConverter<BigDecimal> (){
-
-        @Override
-        public String toString(BigDecimal bigDecimal) {
-            return bigDecimal != null ? bigDecimal.toString() : "";
+    private int lookupRowIdx(AttendanceSheetRow targetRow) {
+        for (int i = 0; i < sheet.rows.length; i++) {
+            if (sheet.rows[i] == targetRow) return i;
         }
-
-        @Override
-        public BigDecimal fromString(String string) {
-            try {
-                return new BigDecimal(string);
-            } catch (Exception e) {
-                // TODO change cell background?
-                return null;
-            }
+        throw new IllegalArgumentException("Row not found " + targetRow.workerId + ", " + targetRow.workerDescription);
+    }
+    
+    private String bigDecimalToString(BigDecimal number) {
+        return number != null ? number.toString() : "";
+    }
+    
+    private BigDecimal stringToBigDecimal(String str) {
+        try {
+            return new BigDecimal(str);
+        } catch (Exception e) {
+            // TODO how to warn the user?
+            return null;
         }
-    };
+    }
 }
