@@ -85,7 +85,7 @@ public class MonthDaysGrid {
             int month = cal.get(MONTH);
             int year = cal.get(YEAR);
             header.select(month, year);
-            refreshCellsLabels(year, month);
+            refreshCellsLabels(year, month + 1);
         }
     };
     
@@ -112,6 +112,10 @@ public class MonthDaysGrid {
             selectedDateProperty.setValue(cal.getTime());
         }
     };
+    
+    public void view(int monthIdx, int year) {
+        header.select(monthIdx, year);
+    }
     
     public Node getWidget() {
         return root;
