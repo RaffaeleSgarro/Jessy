@@ -107,10 +107,10 @@ public class AttendanceSheetController extends VBox {
         sheet = sheetDao.find(date);
         
         if (sheet == null) {
-            // TODO maybe introduce active workers?
+            // TODO maybe introduce active workers instead of findAll()?
             sheet = prepareSheet(date, workersDao.findAll(), getColumnsForNewSheet());
         } else {
-            // TODO add ant current worker not in the list?
+            // TODO add any current worker not in the list?
         }
         
         setUpTable();
@@ -143,6 +143,7 @@ public class AttendanceSheetController extends VBox {
         name.setEditable(false);
         
         ObservableList<TableColumn<AttendanceSheetRow, ?>> columns = table.getColumns();
+        columns.clear();
         columns.add(name);
         
         cells = new StringProperty[sheet.rows.length][sheet.headers.length];
