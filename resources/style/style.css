@@ -1,3 +1,13 @@
+.root{
+    -fx-font-size: 16pt;
+    -fx-font-family: "Segoe UI";
+}
+
+.column-header {
+    -fx-font-size: 14pt;
+    -fx-font-family: "Segoe UI";
+}
+
 .menu-item.date-picker:hover:selected
   , .menu-item.date-picker:focused:selected
   , .menu-item.date-picker:hover
