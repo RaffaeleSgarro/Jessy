@@ -43,6 +43,8 @@ public class MonthDaysGrid {
      */
     private boolean ignoreChangeEvent = false;
     
+    private MonthDayCell lastSelectedCell;
+    
     private final Locale locale;
     private final Header header;
     private final VBox root = new VBox();
@@ -58,6 +60,7 @@ public class MonthDaysGrid {
         
         header = new Header(locale);
         GridPane grid = new GridPane();
+        grid.getStyleClass().add("month-days-grid");
         root.getChildren().setAll(header, grid);
         root.setSpacing(10);
         
@@ -68,6 +71,8 @@ public class MonthDaysGrid {
             dayOfTheWeek.setPrefWidth(48);
             dayOfTheWeek.setAlignment(Pos.CENTER);
             grid.add(dayOfTheWeek, col, 0);
+            dayOfTheWeek.getStyleClass().add("month-day-cell");
+            dayOfTheWeek.getStyleClass().add("day-name");
         }
         
         // Build the cells, register and show
@@ -118,14 +123,14 @@ public class MonthDaysGrid {
        }
     };
     
-    private final Listener<Integer> onDaySelected = new Listener<Integer>() {
-        @Override public void onEvent(Integer day) {
+    private final Listener<MonthDayCell> onDaySelected = new Listener<MonthDayCell>() {
+        @Override public void onEvent(MonthDayCell cell) {
             GregorianCalendar cal1 = cal();
             cal1.set(YEAR, viewedYearProperty.get());
             cal1.set(MONTH, viewedMonthProperty.get() - 1);
             cal1.set(DAY_OF_MONTH, 1);
             GregorianCalendar cal = cal1;
-            cal.set(DAY_OF_MONTH, day);
+            cal.set(DAY_OF_MONTH, cell.dayProperty().get());
             selectedDateProperty.setValue(cal.getTime());
         }
     };
@@ -160,6 +165,16 @@ public class MonthDaysGrid {
         int maxDayOfMonth = cal.getActualMaximum(DAY_OF_MONTH);
         int currentDay = 0;
         
+        Date selectedDate = selectedDateProperty.get();
+        int selectedDay = -1;
+        if (selectedDate != null) {
+            GregorianCalendar selectedDayCalendar = cal();
+            selectedDayCalendar.setTime(selectedDate);
+            selectedDay = selectedDayCalendar.get(DAY_OF_MONTH);
+        }
+        
+        boolean isSelectedDayVisible = isSelectedDayVisible(year, month - 1);
+        
         for (int row = 0; row < 6; row++) {
             for (int column  = 0; column < 7; column++ ) {
                 MonthDayCell cell = days[idx(row, column)];
@@ -168,11 +183,23 @@ public class MonthDaysGrid {
                 } else if (currentDay < maxDayOfMonth) {
                     currentDay += 1;
                     cell.putInEnabledMode(currentDay);
+                    if (isSelectedDayVisible && currentDay == selectedDay) {
+                        cell.getStyleClass().add("selected-day");
+                    } else {
+                        cell.getStyleClass().remove("selected-day");
+                    }
                 } else {
                     cell.putInDisabledMode();
                 }
             }
         }
+    }
+    
+    private boolean isSelectedDayVisible(int year, int month) {
+        if (selectedDateProperty.get() == null) return false;
+        GregorianCalendar cal = cal();
+        cal.setTime(selectedDateProperty.get());
+        return year == cal.get(YEAR) && month == cal.get(MONTH);
     }
     
     /**

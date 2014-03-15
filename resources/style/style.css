@@ -24,3 +24,31 @@
   , menu-item.date-picker:selected .label {
     -fx-text-fill: black;
 }
+
+.month-days-grid {
+    -fx-border-width: 1px 1px 0 0;
+    -fx-border-color: #C4C4C4;
+}
+
+.month-day-cell {
+    -fx-border-width: 0 0 1px 1px;
+    -fx-border-color: #C4C4C4;
+    -fx-background-radius: 0;
+}
+
+.month-day-cell.enabled {
+    -fx-background-color: white;
+    -fx-cursor: hand;
+}
+
+.month-day-cell.enabled:hover {
+    -fx-background-color: #EDF4FF;
+}
+
+.month-day-cell.disabled, .month-day-cell.day-name {
+    -fx-background-color: #F0F0F0;
+}
+
+.month-day-cell.enabled.selected-day {
+    -fx-background-color: #FCE0EF;
+}
