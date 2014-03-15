@@ -18,6 +18,7 @@ import jessy.misc.Listener;
 import jessy.utils.DateUtils;
 
 import static java.util.Calendar.*;
+import javafx.geometry.Pos;
 
 /**
  * The grid has 7 columns (one for each week day) and 6 rows (because a month
@@ -63,7 +64,10 @@ public class MonthDaysGrid {
         // Draw the grid headers
         List<String> shortWeekDays = DateUtils.findAbbrevWeekDaysNames(locale);
         for (int col = 0; col < 7; col++) {
-            grid.add(new Label(shortWeekDays.get(col)), col, 0);
+            final Label dayOfTheWeek = new Label(shortWeekDays.get(col));
+            dayOfTheWeek.setPrefWidth(48);
+            dayOfTheWeek.setAlignment(Pos.CENTER);
+            grid.add(dayOfTheWeek, col, 0);
         }
         
         // Build the cells, register and show
